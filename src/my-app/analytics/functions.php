@@ -4,7 +4,7 @@
 //DB接続関数（PDO）
 function db_con(){
   $dbname='sc_project';
-  try {$pdo = new PDO('mysql:dbname=sc_project;host=mysql;charset=utf8mb4','root','mysql',
+  try {$pdo = new PDO('mysql:dbname=sc_project;host=mysql;charset=utf8mb4','root','*****',
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,]);
       } catch (PDOException $e) {
     exit('DbConnectError:'.$e->getMessage());
