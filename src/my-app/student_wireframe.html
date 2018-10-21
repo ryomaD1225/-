@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel=stylesheet href="/asset/css/sd_style.css">
+</head>
+<body class="student">
+<div id="wrapAll">
+	<form id="student_setting">
+		<!-- <p>自分のクラス</p> 一度コメントアウトします
+			<label for=""><span>クラスID</span><input type="text" name="class_id"></label> -->
+		<!-- <p>自分の名前</p> -->
+		<label for=""><span>自分のID</span><input type="text" name="student_id" id="student_id"></label>
+		<!-- <p>先生の選択</p> 一度コメントアウトします
+		<select name="teach_id" id="teach_id">
+			<option value="1">山崎先生</option>
+			<option value="2">小菅先生</option>
+		</select>
+		<p>項目以外の先生の場合</p>
+		<label for=""><span>先生ID</span><input type="text" name="teacher_id"></label> -->
+		<p><button id="login">設定</button></p> 
+	</form>
+	<div>
+		<p id="login_check"></p>
+		<button id="logout" style="display: none;">ログアウト</button>
+	</div>
+	<!-- 初期設定したら、その設定をlocalStorageに追加して、引き出せるようにする -->
+	<div id="unknow_btn" style="display: none;">
+		<span>わかんない!</span>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+	// 0.(処理追加)すでにローカルストレージに値がある場合には、わかんないボタンを最初に表示
+	if(localStorage.getItem("student_id") && localStorage.getItem("name")){
+		const name = localStorage.getItem("name");
+		$("#login_check").text(name+"さんがログインしています。");
+		$("#student_setting").hide();
+		$("#unknow_btn").show();
+		$("#logout").show();
+	}
+	// 1.設定ボタンを押したら、localStorageに設定を登録	
+	// 2.設定できたら#student_settingがdisplay: noneで#unknow_btnがshowになるようにする
+	$("#login").on("click",function(){
+		const student_id = $("#student_id").val();
+		$.ajax({ //ajaxによる非同期通信発生
+        type: "POST", 
+        url: "login.php", 
+        data: {student_id:student_id}
+        }).done(function(data, textStatus, jqXHR){
+			if(data != "false"){
+				localStorage.setItem("student_id",student_id);
+				localStorage.setItem("name",data);
+				const name = localStorage.getItem("name");
+				$("#login_check").text(name+"さんがログインしています。");
+				$("#student_setting").hide();
+				$("#unknow_btn").show();
+				$("#logout").show();
+			}else{
+				$("#login_check").text("登録IDと一致しません。");
+			}
+        }).fail(function(jqXHR, textStatus, errorThrown){
+            alert("エラーです。操作をやり直してください。");
+        });
+        return false;
+	});
+	// 3.#unknow_btnがClickされたらAJAX発火
+	$('#unknow_btn').on('click touchstart', function(event) {
+		$(this).toggleClass('on');
+		$(this).on('animationend', function(){
+		    $(this).removeClass('on');
+		});
+		$student_id = localStorage.getItem("student_id");
+		$.ajax({ //ajaxによる非同期通信発生
+        type: "POST", 
+        url: "insert.php", 
+        data: {student_id:$student_id}
+        }).done(function(data, textStatus, jqXHR){
+			//インサートできてるか確認のために一時的にアラートで表示します
+            alert(data);
+        }).fail(function(jqXHR, textStatus, errorThrown){
+			//インサートできてるか確認のために一時的にアラートで表示します
+            alert('エラーです！');
+    });
+    return false;
+	})
+	// 4.#logoutがClickされたら最初の画面に戻る
+	$("#logout").on("click",function(){
+		localStorage.removeItem("student_id");
+		localStorage.removeItem("name");
+		$("#login_check").text("");
+		$("#student_setting").show();
+		$("#unknow_btn").hide();
+		$("#logout").hide();
+	});
+
+	
+</script>

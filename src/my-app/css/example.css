@@ -1,0 +1,16 @@
+header {
+  text-align: right;
+}
+p a {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+nav ul li {
+  display: inline-block;
+  margin-right: 25px;
+  text-decoration: none;
+}
+
+

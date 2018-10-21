@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel=stylesheet href="/asset/css/an_style.css">
+</head>
+<body class="analytics">
+<div id="wrapAll">
+	<div id="total_realtimeline_wrap">
+		<canvas id="total_realtimeline"></canvas>
+	</div>
+	<div id="student_pushcount_wrap">
+		<canvas id="student_pushcount"></canvas>
+	</div>
+	<div id="student_alert_wrap">
+		<span class="blue">n:柴</span>
+		<span class="red">n:岸</span>
+	</div>
+</div>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/js/moment.js"></script>
+<script type="text/javascript" src="/js/Chart.js"></script>
+<script type="text/javascript" src="/js/chartjs-plugin-streaming.js"></script>
+<script>
+var ctx = document.getElementById('total_realtimeline').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'line',               // 'line', 'bar', 'bubble' and 'scatter' types are supported
+    data: {
+        datasets: [{
+            data: [],            // empty at the beggining
+            label: 'realtime',
+        }]
+    },
+    options: {
+        scales: {
+            xAxes: [{
+                type: 'realtime'    // x axis will auto-scroll from right to left
+            }]
+        },
+        plugins: {
+            streaming: {            // enabled by default
+                duration: 20000,    // data in the past 20000 ms will be displayed
+                refresh: 1000,      // onRefresh callback will be called every 1000 ms
+                delay: 1000,        // delay of 1000 ms, so upcoming values are known before plotting a line
+                frameRate: 30,      // chart is drawn 30 times every second
+                pause: false,       // chart is not paused
+
+                // a callback to update datasets
+                onRefresh: function(chart) {
+                    chart.data.datasets[0].data.push({
+                        x: Date.now(),
+                        y: get_total_realtimeline_data()//設定した秒数毎にget()がたたかれる
+                    });
+                }
+            }
+        }
+    }
+});
+
+function get_total_realtimeline_data(){
+ return 10;
+}
+</script>
+
+<script>
+var ctx = document.getElementById('student_pushcount').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'bar',               // 'line', 'bar', 'bubble' and 'scatter' types are supported
+	data: {
+        labels: ["柴", "岸", "岸本", "岡崎"],
+        datasets: [{
+            label: '得票数',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+
+
+</script>
